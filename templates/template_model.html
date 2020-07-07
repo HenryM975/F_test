@@ -18,7 +18,7 @@
    #nameblock{
    border: 1px solid black;
    height: 90px;
-   width: 221px;
+   width: 10%;
    background-color: #E0FFFF;
    padding: 5px;
    border-radius: 10px;
@@ -33,15 +33,15 @@
    position: fixed;
    border: 1px solid black;
    height: 10%;
-   width: 10%;
+   width: 7%;
    background-color: #E0FFFF;
    padding: 5px;
    border-radius: 10px;
    float: left;
    }
    #mainblock {
-   height: 90%;
-   width: 88%;
+   height: 80%;
+   width: 81.5%;
    background-color: #E0FFFF;
    padding: 5px;
    border-radius: 10px;
@@ -54,6 +54,7 @@
    font-weight: normal;
    font-family: Times new roman;
    line-height: 0.9em;
+   word-wrap: break-word;
     }
     #top {
    border-bottom: 1px solid black;
@@ -78,7 +79,13 @@
             </ul>
             <img src="favicon.ico"/><!--dont work-->
         </div>
-
+</div>
+        <div id = "nameblock">
+        <!--<a href="http://127.0.0.1:8000/" class="link1"> Cсылка 1</a>
+        <a href="http://127.0.0.1:8000/1" class="link1"> Ссылка 2</a>
+        <a href="http://127.0.0.1:8000/2" class="link1"> Ссылка 3</a>-->
+        <a href="http://127.0.0.1:5000/" class="namecb"><p><p><h1>Name</h1></p></a>
+        </div>
 {% block content %}
     <div id = "mainblock">
          {% block page_content %} {% endblock %}
