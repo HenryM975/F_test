@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, Email
@@ -24,23 +24,35 @@ def link_2():
     #return '<h1> smth <h1>'
     return render_template('link_2.html')
 
+@app.route('/reg', methods = ['GET', 'POST'])
+def reg():
+    #name = None
+    form = NameForm()
+    if form.validate_on_submit():
+        #name = form.username.data
+        session['username'] = form.username.data
+        return redirect(url_for('reg'))
+        #form.username.data = ''
+        #add usermail!
+    #return '<h1> smth <h1>'
+    return render_template('reg.html', form=form, name=session.get('username'))
+"""
 @app.route('/reg')
 def reg():
     form = NameForm()
     #return '<h1> smth <h1>'
-    return render_template('reg.html', form=form)
+    return render_template('reg.html', form=form)"""
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html')
-#>? work with reg.html
 
 class NameForm(FlaskForm):
     username = StringField('What is your name?', validators=[DataRequired()])
     usermail = StringField('Your email?', validators=[Email()])
     submit = SubmitField('Submit')
 
-#<
+
 
     #@app.route('/index')
     #def findex():
