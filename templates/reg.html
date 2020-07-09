@@ -1,8 +1,11 @@
 {% extends "template_model.html" %}
 {% block title %} smth {% endblock %}
 {% block page_content %}
-    <form method="POST">
-        {{form.name.label }} {{ form.name(id='my-text-field') }}
-        {{ form.submit() }}
-    </form>
+<form action="" method="POST">
+    {{ form.username.label() }}<br>
+    {{ form.username() }}<br><br>
+    {{ form.usermail.label() }}<br>
+    {{ form.usermail() }}<br><br>
+    {{ form.submit() }}
+</form>
 {% endblock %}

@@ -1,8 +1,11 @@
 from flask import Flask, render_template
-from flask_wtf import Form #
-from wtforms import StringField, SubmitField #
-from wtforms.validators import Required #
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired, Email
+import email_validator
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'QASQAD'
 
 
 #try:
@@ -23,16 +26,20 @@ def link_2():
 
 @app.route('/reg')
 def reg():
+    form = NameForm()
     #return '<h1> smth <h1>'
-    return render_template('reg.html')
+    return render_template('reg.html', form=form)
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html')
 #>? work with reg.html
-class NameForm(Form):
-    name = StringField('What is your name?', validators=[Required()])
+
+class NameForm(FlaskForm):
+    username = StringField('What is your name?', validators=[DataRequired()])
+    usermail = StringField('Your email?', validators=[Email()])
     submit = SubmitField('Submit')
+
 #<
 
     #@app.route('/index')
