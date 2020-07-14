@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, Email
 import email_validator
 from flask_sqlalchemy import SQLAlchemy
 import os
+from flask_migrate import Migrate,MigrateCommand
 
 
 #>test
@@ -21,6 +22,7 @@ app.config['SECRET_KEY'] = 'QASQAD'
 
 db = SQLAlchemy(app)
 
+
 #>test for($ python hello.py shell >>> from hello import db >>> db.create_all())
 from flask_script import Manager
 
@@ -29,6 +31,11 @@ manager = Manager(app)
 if __name__ == '__main__':
     manager.run()
 #<test
+def make_shell_context():
+    return dict(app = app, db=db, User=User, Role=Role)
+#manager.add_command("shell", Shell(make_context = make_shell_context()))
+migrate = Migrate(app, db)
+manager.add_command('db', MigrateCommand)
 
 
 #try:
@@ -52,9 +59,21 @@ def reg():
     #name = None
     form = NameForm()
     if form.validate_on_submit():
-        old_name = session.get('name')
-        if old_name is not None and old_name != form.username.data:
-            flash("Looks like you have changed your name")
+        user = User.query.filter_by(username = form.username.data).first()
+        if user is None:
+            user = User(username = form.username.data)
+            db.session.add(user)
+            session['known'] = False
+        else:
+            session['known'] = True
+        session['name'] = form.username.data
+        form.username.data = ''
+        return redirect(url_for('reg'))
+    return render_template('reg.html',
+                           form = form, name = session.get('name'),
+                           known = session.get('known', False))
+
+    """          
         #name = form.username.data
         session['username'] = form.username.data
         return redirect(url_for('reg'))
@@ -62,7 +81,7 @@ def reg():
         #add usermail!
     #return '<h1> smth <h1>'
     return render_template('reg.html', form=form, name=session.get('username'))
-"""
+
 @app.route('/reg')
 def reg():
     form = NameForm()
