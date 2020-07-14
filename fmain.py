@@ -6,6 +6,7 @@ import email_validator
 from flask_sqlalchemy import SQLAlchemy
 import os
 
+
 #>test
 
 #<test
@@ -14,11 +15,21 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-                'aqlite:///' + os.path.join(basedir, 'data.sqlite')
+                'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SECRET_KEY'] = 'QASQAD'
 
 db = SQLAlchemy(app)
+
+#>test for($ python hello.py shell >>> from hello import db >>> db.create_all())
+from flask_script import Manager
+
+manager = Manager(app)
+
+if __name__ == '__main__':
+    manager.run()
+#<test
+
 
 #try:
 @app.route('/')
@@ -68,11 +79,12 @@ class NameForm(FlaskForm):
     submit = SubmitField('Submit')
 
 #>db
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
-    users = db.relationship('User', backref='role')
+    users = db.relationship('User', backref='role', lazy='dynamic')
 
     def __repr__(self):
         return '<Role %r>' % self.name
@@ -97,4 +109,4 @@ class User(db.Model):
         #return '<h1> Error <h1>', 400
 
 if __name__ == '__main__':
-    app.run(debug=True)
+        app.run(debug=True)
