@@ -1,7 +1,7 @@
 {% extends "template_model.html" %}
 {% block title %} smth {% endblock %}
 {% block page_content %}
-<!--<form action="" method="POST">
+<form action="" method="POST">
     {{ form.username.label() }}<br>
     {{ form.username() }}<br><br>
     {{ form.usermail.label() }}<br>
@@ -10,8 +10,8 @@
     <div >
         {{ message }}
     </div>
-</form>-->
-<div class="page-header">
+</form>
+<div>
     <h1>Hello, {% if name %} {{name }} {% else %} Stranger {% endif %}!</h1>
     {% if not known %}
     <p>Pleased to meet you!</p>
@@ -19,5 +19,4 @@
     <p>Happy to see you again!</p>
     {% endif %}
 </div>
-{{ wtf.quick_form(form) }}
 {% endblock %}
