@@ -5,7 +5,11 @@ from wtforms.validators import DataRequired, Email
 import email_validator
 from flask_sqlalchemy import SQLAlchemy
 import os
-from flask_migrate import Migrate,MigrateCommand
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Shell
+
+
 
 
 #>test
@@ -15,29 +19,32 @@ from flask_migrate import Migrate,MigrateCommand
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-                'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SECRET_KEY'] = 'QASQAD'
 
 db = SQLAlchemy(app)
-
+migrate = Migrate(app, db)
 
 #>test for($ python hello.py shell >>> from hello import db >>> db.create_all())
-from flask_script import Manager
 
 manager = Manager(app)
+manager.add_command('db', MigrateCommand)
+
+
 
 if __name__ == '__main__':
     manager.run()
 #<test
+"""
 def make_shell_context():
     return dict(app = app, db=db, User=User, Role=Role)
-#manager.add_command("shell", Shell(make_context = make_shell_context()))
-migrate = Migrate(app, db)
+manager.add_command("shell", Shell(make_context = make_shell_context()))
+
 manager.add_command('db', MigrateCommand)
-
-
+"""
+if __name__ == '__main__':
+        app.run(debug=True)
 #try:
 @app.route('/')
 def index():
@@ -59,9 +66,9 @@ def reg():
     #name = None
     form = NameForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username = form.username.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if user is None:
-            user = User(username = form.username.data)
+            user = User(username=form.username.data)
             db.session.add(user)
             session['known'] = False
         else:
@@ -70,23 +77,9 @@ def reg():
         form.username.data = ''
         return redirect(url_for('reg'))
     return render_template('reg.html',
-                           form = form, name = session.get('name'),
-                           known = session.get('known', False))
+                           form=form, name=session.get('name'),
+                           known=session.get('known', False))
 
-    """          
-        #name = form.username.data
-        session['username'] = form.username.data
-        return redirect(url_for('reg'))
-        #form.username.data = ''
-        #add usermail!
-    #return '<h1> smth <h1>'
-    return render_template('reg.html', form=form, name=session.get('username'))
-
-@app.route('/reg')
-def reg():
-    form = NameForm()
-    #return '<h1> smth <h1>'
-    return render_template('reg.html', form=form)"""
 
 @app.errorhandler(404)
 def page_not_found(e):
