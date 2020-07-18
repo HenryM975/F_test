@@ -66,6 +66,9 @@ def reg():
     #name = None
     form = NameForm()
     if form.validate_on_submit():
+        #>call forwarding and sessions pr
+        session['name'] = form.username.data
+        #<
         user = User.query.filter_by(username=form.username.data).first()
         if user is None:
             user = User(username=form.username.data)
@@ -76,9 +79,7 @@ def reg():
         session['name'] = form.username.data
         form.username.data = ''
         return redirect(url_for('reg'))
-    return render_template('reg.html',
-                           form=form, name=session.get('name'),
-                           known=session.get('known', False))
+    return render_template('reg.html', form=form, name=session.get('name'), known=session.get('known', False))
 
 
 @app.errorhandler(404)
