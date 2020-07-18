@@ -8,13 +8,9 @@ import os
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Shell
+import os
+from flask_mail import Mail, Message
 
-
-
-
-#>test
-
-#<test
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -45,6 +41,9 @@ manager.add_command('db', MigrateCommand)
 """
 if __name__ == '__main__':
         app.run(debug=True)
+#>mail initialization
+mail = Mail(app)
+#<mail initialization
 #try:
 @app.route('/')
 def index():
@@ -74,6 +73,10 @@ def reg():
             user = User(username=form.username.data)
             db.session.add(user)
             session['known'] = False
+            #>send mail for admin
+            if app.config['FLASKY_ADMIN']:
+                send_email(app.config['FLASKY_ADMIN'], 'New User', 'mail/new_user', user=user)
+            #<send mail for admin
         else:
             session['known'] = True
         session['name'] = form.username.data
@@ -110,6 +113,23 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+#>mail
+app.config['MAIL_SERVER'] = 'Henry513876@yandex.ru'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+
+app.config['FLASKY_MAIL_SUBJECT_PREFIX'] = '[Flasky]'
+app.config['FLASKY_MAIL_SENDER'] = 'Flasky Admin Henry513876@yandex.ru'
+
+def send_email(to, subject, template, **kwargs):
+    msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + subject, sender=app.config['FLASKY_MAILSENDER'], recipients=[to])
+    msg.body = render_template(template + '.txt', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+    mail.send(msg)
+#<mail
+
 
 #<db
 
@@ -120,6 +140,7 @@ class User(db.Model):
     #@app.route('/')
     #def index():
         #return '<h1> Error <h1>', 400
+
 
 if __name__ == '__main__':
         app.run(debug=True)
